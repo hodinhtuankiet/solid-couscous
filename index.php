@@ -10,8 +10,8 @@
 
 <body>
     <div class="container my-5">
-        <h2>List of Clients</h2>
-        <a class="btn btn-primary" href="/myshop/create.php" role="button">New Client</a>
+        <h2>ToDo List</h2>
+        <a class="btn btn-primary" href="create.php" role="button">New Client</a>
         <br>
         <table class="table">
             <thead>
