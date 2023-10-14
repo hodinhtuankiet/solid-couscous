@@ -11,7 +11,12 @@
 <body>
     <div class="container my-5">
         <h2>ToDo List</h2>
-        <a class="btn btn-primary" href="create.php" role="button">New Client</a>
+        <form method="post" action="search.php">
+            <input type="text" placeholder="Search users" name="search">
+            <button type="submit" name="submit">Search</button>
+        </form>
+
+        <a class="btn btn-primary mt-3" href="create.php" role="button">New Client</a>
         <br>
         <table class="table">
             <thead>
