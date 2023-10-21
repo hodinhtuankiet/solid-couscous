@@ -2,31 +2,29 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "crud";
+$database = "giuaki";
 
 // Create a database connection
 $connection = new mysqli($host, $username, $password, $database);
 
-$name = '';
-$email = '';
-$phone = '';
-$address = '';
+$CourseID = '';
+$StudentID = '';
+$Grade = '';
 
 $errorMessage = "";
 $successMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $phone = $_POST["phone"];
-    $address = $_POST["address"];
+    $CourseID = $_POST["CourseID"];
+    $StudentID = $_POST["StudentID"];
+    $Grade = $_POST["Grade"];
     do {
-        if (empty($name) || empty($email) || empty($phone) || empty($address)) {
+        if (empty($CourseID) || empty($StudentID) || empty($Grade)) {
             $errorMessage = "All the fields are required";
             break;
         }
-        $sql = "INSERT INTO clients (name, email, phone, address)" . "VALUES 
-        ('$name', '$email', '$phone', '$address')";
+        $sql = "INSERT INTO Enrollment (CourseID, StudentID, Grade)" . "VALUES 
+        ('$CourseID', '$StudentID', '$Grade')";
         $result = $connection->query($sql);
 
         if (!$result) {
@@ -35,10 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Handle the error or display it as needed
         }
 
-        $name = '';
-        $email = '';
-        $phone = '';
-        $address = '';
+        $CourseID = '';
+        $StudentID = '';
+        $Grade = '';
 
         $successMessage = "Client added successfully";
         header("location: /index.php");
@@ -58,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="container my-5">
-        <h2>New Client</h2>
+        <h2>New</h2>
         <?php
         if (!empty($errorMessage)) {
             echo "
@@ -71,28 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <form method="post">
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Name</label>
+                <label class="col-sm-3 col-form-label">CourseID</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="name" value="<?php echo $name; ?>">
+                    <input type="text" class="form-control" name="CourseID" value="<?php echo $CourseID; ?>">
                 </div>
             </div>
             <!-- Add any other form fields here -->
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Email</label>
+                <label class="col-sm-3 col-form-label">StudentID</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="email" value="<?php echo $email; ?>">
+                    <input type="text" class="form-control" name="StudentID" value="<?php echo $StudentID; ?>">
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Phone</label>
+                <label class="col-sm-3 col-form-label">Grade</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="phone" value="<?php echo $phone; ?>">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Address</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control" name="address" value="<?php echo $address; ?>">
+                    <input type="text" class="form-control" name="Grade" value="<?php echo $Grade; ?>">
                 </div>
             </div>
             <?php

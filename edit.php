@@ -2,28 +2,26 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "crud";
+$database = "giuaki";
 
 // Create a database connection
 $connection = new mysqli($host, $username, $password, $database);
 
-$id = "";
-$name = "";
-$email = "";
-$phone = "";
-$address = "";
+$CourseID = "";
+$StudentID = "";
+$Grade = "";
 $errorMessage = "";
 $successMessage = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // GET method: Show the data of the client
-    if (!isset($_GET["id"])) {
+    if (!isset($_GET["EnrollmentID"])) {
         header("location: /index.php");
         exit;
     }
-    $id = $_GET["id"];
+    $id = $_GET["EnrollmentID"];
 
-    $sql = "SELECT * FROM clients WHERE id = $id";
+    $sql = "SELECT * FROM Enrollment WHERE EnrollmentID = $id";
     $result = $connection->query($sql);
 
     if (!$result) {
@@ -34,40 +32,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             header("location: /index.php");
             exit;
         }
-        // Now you have the client data in $row, and you can use it as needed.
-        $name = $row["name"];
-        $email = $row["email"];
-        $phone = $row["phone"];
-        $address = $row["address"];
+        $CourseID = $row["CourseID"];
+        $StudentID = $row["StudentID"];
+        $Grade = $row["Grade"];
     }
-
-    // You may want to fetch the client's data from the database using $id here
 } else {
     // POST method: Update the data of the client
     $id = $_POST["id"];
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $phone = $_POST["phone"];
-    $address = $_POST["address"];
-    do {
-        if (empty($id) | empty($name) | empty($email) | empty($phone) | empty($address)) {
-            $errorMessage = "All the fields are required";
-            break;
-        }
-        $sql = "UPDATE clients 
-        SET name = '$name', email = '$email', phone = '$phone', address = '$address' 
-        WHERE id = $id";
+    $CourseID = $_POST["CourseID"];
+    $StudentID = $_POST["StudentID"];
+    $Grade = $_POST["Grade"];
+
+    if (empty($CourseID) || empty($StudentID) || empty($Grade)) {
+        $errorMessage = "All the fields are required";
+    } else {
+        $sql = "UPDATE Enrollment 
+        SET CourseID = '$CourseID', StudentID = '$StudentID', Grade = '$Grade'
+        WHERE EnrollmentID = $id";
         $result = $connection->query($sql);
 
         if (!$result) {
             $errorMessage = "Invalid query: " . $connection->error;
         } else {
             $successMessage = "Client updated correctly";
+            header("location: /index.php");
+            exit;
         }
-
-        header("location: /index.php");
-        exit;
-    } while (true);
+    }
 }
 ?>
 
@@ -84,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 <body>
     <div class="container my-5">
-        <h2>New Client</h2>
+        <h2>Edit</h2>
         <?php
         if (!empty($errorMessage)) {
             echo "
@@ -98,28 +89,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         <form method="post">
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Name</label>
+                <label class="col-sm-3 col-form-label">CourseID</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="name" value="<?php echo $name; ?>">
+                    <input type="text" class="form-control" name="CourseID" value="<?php echo $CourseID; ?>">
                 </div>
             </div>
             <!-- Add any other form fields here -->
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Email</label>
+                <label class="col-sm-3 col-form-label">StudentID</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="email" value="<?php echo $email; ?>">
+                    <input type="text" class="form-control" name="StudentID" value="<?php echo $StudentID; ?>">
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Phone</label>
+                <label class="col-sm-3 col-form-label">Grade</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="phone" value="<?php echo $phone; ?>">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Address</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control" name="address" value="<?php echo $address; ?>">
+                    <input type="text" class="form-control" name="Grade" value="<?php echo $Grade; ?>">
                 </div>
             </div>
             <?php
