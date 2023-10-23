@@ -2,27 +2,30 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "giuaki";
+$database = "midterm";
 
 // Create a database connection
 $connection = new mysqli($host, $username, $password, $database);
 
-$CourseID = "";
-$StudentID = "";
-$Grade = "";
 $errorMessage = "";
 $successMessage = "";
 
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // GET method: Show the data of the client
-    if (!isset($_GET["EnrollmentID"])) {
+    if (!isset($_GET["book_id"])) {
         header("location: /index.php");
         exit;
     }
-    $id = $_GET["EnrollmentID"];
+    $id = $_GET["book_id"];
 
-    $sql = "SELECT * FROM Enrollment WHERE EnrollmentID = $id";
-    $result = $connection->query($sql);
+    $stmt = $connection->prepare("SELECT book_id, book_title, book_author, book_image, book_descr, book_price, publisherid FROM books WHERE book_id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if (!$result) {
         $errorMessage = "Error in the database query: " . $connection->error;
@@ -32,35 +35,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             header("location: /index.php");
             exit;
         }
-        $CourseID = $row["CourseID"];
-        $StudentID = $row["StudentID"];
-        $Grade = $row["Grade"];
+        $book_id = $row["book_id"];
+        $book_title = $row["book_title"];
+        $book_author = $row["book_author"];
+        $book_image = $row["book_image"];
+        $book_descr = $row["book_descr"];
+        $book_price = $row["book_price"];
+        $publisherid = $row["publisherid"];
     }
-} else {
+} elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // POST method: Update the data of the client
     $id = $_POST["id"];
-    $CourseID = $_POST["CourseID"];
-    $StudentID = $_POST["StudentID"];
-    $Grade = $_POST["Grade"];
+    $book_title = $_POST["BookTitle"];
+    $book_author = $_POST["BookAuthor"];
+    $book_image = $_POST["Image"];
+    $book_descr = $_POST["Description"];
+    $book_price = $_POST["Price"];
+    $publisherid = $_POST["publisherid"];
 
-    if (empty($CourseID) || empty($StudentID) || empty($Grade)) {
+    if (empty($book_title) || empty($book_author)) {
         $errorMessage = "All the fields are required";
     } else {
-        $sql = "UPDATE Enrollment 
-        SET CourseID = '$CourseID', StudentID = '$StudentID', Grade = '$Grade'
-        WHERE EnrollmentID = $id";
-        $result = $connection->query($sql);
+        $stmt = $connection->prepare("UPDATE books SET book_title = ?, book_author = ?, book_image = ?, book_descr = ?, book_price = ?,publisherid=? WHERE book_id = ?");
+        $stmt->bind_param("ssssdii", $book_title, $book_author, $book_image, $book_descr, $book_price, $publisherid, $id);
 
-        if (!$result) {
-            $errorMessage = "Invalid query: " . $connection->error;
-        } else {
-            $successMessage = "Client updated correctly";
+        if ($stmt->execute()) {
+            $successMessage = "Book updated correctly";
+            $stmt->close();
             header("location: /index.php");
             exit;
+        } else {
+            $errorMessage = "Error updating the book: " . $stmt->error;
         }
     }
 }
+
+$connection->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>my sốp</title>
+    <title>Your Title</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-betal/dist/js/bootstrap.bundle.min.js"></script>
 </head>
@@ -89,22 +101,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         <form method="post">
             <input type="hidden" name="id" value="<?php echo $id; ?>">
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">CourseID</label>
+                <label class="col-sm-3 col-form-label">BookTitle</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="CourseID" value="<?php echo $CourseID; ?>">
+                    <input type="text" class="form-control" name="BookTitle" value="<?php echo $book_title; ?>">
                 </div>
             </div>
             <!-- Add any other form fields here -->
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">StudentID</label>
+                <label class="col-sm-3 col-form-label">BookAuthor</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="StudentID" value="<?php echo $StudentID; ?>">
+                    <input type="text" class="form-control" name="BookAuthor" value="<?php echo $book_author; ?>">
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-3 col-form-label">Grade</label>
+                <label class="col-sm-3 col-form-label">Image</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="Grade" value="<?php echo $Grade; ?>">
+                    <input type="text" class="form-control" name="Image" value="<?php echo $book_image; ?>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Description</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="Description" value="<?php echo $book_descr; ?>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Price</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="Price" value="<?php echo $book_price; ?>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Publisherid</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="publisherid" value="<?php echo $publisherid; ?>">
                 </div>
             </div>
             <?php
@@ -127,11 +157,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
                 <div class="col-sm-3 d-grid">
-                    | <a class="btn btn-outline-primary" href="/myshop/index.php" role="button">Cancel</a>
+                    <a class="btn btn-outline-primary" href="/index.php" role="button">Cancel</a>
                 </div>
         </form>
     </div>
-
 </body>
 
 </html>

@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "giuaki";
+$database = "midterm";
 
 // Tạo kết nối đến cơ sở dữ liệu
 $connection = new mysqli($servername, $username, $password, $database);
@@ -16,7 +16,7 @@ if (isset($_POST['submit'])) {
     $search = $_POST['search'];
 
     // Sử dụng truy vấn SQL để tìm kiếm trong cơ sở dữ liệu
-    $sql = "SELECT * FROM Enrollment WHERE CourseID LIKE '%$search%' OR StudentID LIKE '%$search%' OR Grade LIKE '%$search%'";
+    $sql = "SELECT * FROM books WHERE book_id LIKE '%$search%'";
     $result = $connection->query($sql);
 
     if (!$result) {
@@ -70,13 +70,14 @@ if (isset($_POST['submit'])) {
                                     while ($todo = $result->fetch_assoc()) {
                                         echo
                                         "<tr>
-                                            <td>{$todo['EnrollmentID']}</td>
-                                            <td>{$todo['CourseID']}</td>
-                                            <td>{$todo['StudentID']}</td>
-                                            <td>{$todo['Grade']}</td>
+                                            <td>{$todo['book_id']}</td>
+                                            <td>{$todo['book_title']}</td>
+                                            <td>{$todo['book_author']}</td>
+                                            <td><img src='{$todo['book_image']}' alt='{$todo['book_title']}' width='100'></td>
+                                            <td>{$todo['book_descr']}</td>
                                             <td>
-                                                <a class='btn btn-danger btn-sm' href='/delete.php?EnrollmentID={$todo['EnrollmentID']}'>Delete</a>
-                                                <a class='btn btn-primary btn-sm' href='/edit.php?EnrollmentID={$todo['EnrollmentID']}'>Edit</a>
+                                                <a class='btn btn-danger btn-sm' href='/delete.php?book_id={$todo['book_id']}'>Delete</a>
+                                                <a class='btn btn-primary btn-sm' href='/edit.php?book_id={$todo['book_id']}'>Edit</a>
                                             </td>
                                         </tr>";
                                     }

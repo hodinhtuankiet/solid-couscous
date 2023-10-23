@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My sốp</title>
+    <title>Tuan Kiet</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 
@@ -13,27 +13,34 @@
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col col-lg-9 col-xl-7">
-                    <div class="card rounded-3">
-                        <div class="card-body p-4">
-                            <h4 class="text-center my-3 pb-3">To Do App</h4>
+                    <div class="card rounded-5">
+                        <div class="card-body p-1">
+                            <h4 class="text-center my-3 pb-3">Giua Ki</h4>
                             <form method="post" action="search.php" class="d-flex justify-content-center align-items-center mb-3 pb-2">
                                 <div class="col-8">
-                                    <input type="text" placeholder="Search users" name="search" class="form-control" id="search">
-                                </div>
+                                    <input type="text" placeholder="Search " name="search" class="form-control" id="search">
+                                </div> </br>
                                 <div class="col-4">
                                     <button type="submit" class="btn btn-primary" name="submit">Search</button>
                                 </div>
                             </form>
                             <div class="col-12">
                                 <a href="/create.php" class="btn btn-warning">Create new</a>
+                            </div> </br>
+                            <div class="col-12">
+                                <a href="/statistic.php" class="btn btn-primary">Statistics</a>
                             </div>
+                            </form>
                             <table class="table mb-4">
                                 <thead>
                                     <tr>
-                                        <th scope="col">EnrollmentID</th>
-                                        <th scope="col">CourseID</th>
-                                        <th scope="col">StudentID</th>
-                                        <th scope="col">Grade</th>
+                                        <th scope="col">BookID</th>
+                                        <th scope="col">BookTitle</th>
+                                        <th scope="col">Author</th>
+                                        <th scope="col">ImageBook</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">BookPrice</th>
+                                        <th scope="col">Publisherid</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
@@ -42,7 +49,7 @@
                                     $servername = "localhost";
                                     $username = "root";
                                     $password = "";
-                                    $database = "giuaki";
+                                    $database = "midterm";
 
                                     // Create connection
                                     $connection = new mysqli($servername, $username, $password, $database);
@@ -51,7 +58,7 @@
                                     if ($connection->connect_error) {
                                         die("Connection failed: " . $connection->connect_error);
                                     }
-                                    $sql = "SELECT * FROM enrollment";
+                                    $sql = "SELECT * FROM books";
                                     $result = $connection->query($sql);
 
                                     if (!$result) {
@@ -61,13 +68,16 @@
                                     while ($todo = $result->fetch_assoc()) {
                                         echo
                                         "<tr>
-                                        <td>{$todo['EnrollmentID']}</td>
-                                        <td>{$todo['CourseID']}</td>
-                                        <td>{$todo['StudentID']}</td>
-                                        <td>{$todo['Grade']}</td>
+                                        <td>{$todo['book_id']}</td>
+                                        <td>{$todo['book_title']}</td>
+                                        <td>{$todo['book_author']}</td>
+                                        <td><img src='{$todo['book_image']}' alt='{$todo['book_title']}' width='100'></td>
+                                        <td>{$todo['book_descr']}</td>
+                                        <td>{$todo['book_price']}</td>
+                                        <td>{$todo['publisherid']}</td>
                                         <td>
-                                        <a class='btn btn-danger btn-sm' href='/delete.php?EnrollmentID=$todo[EnrollmentID]?>'>Delete</a>
-                                        <a class='btn btn-primary btn-sm' href='/edit.php?EnrollmentID=$todo[EnrollmentID]'>Edit</a>
+                                        <a class='btn btn-danger btn-sm' href='/delete.php?book_id=$todo[book_id]?>'>Delete</a>
+                                        <a class='btn btn-primary btn-sm' href='/edit.php?book_id=$todo[book_id]'>Edit</a>
                                         </td>
                                     </tr>";
                                     }
